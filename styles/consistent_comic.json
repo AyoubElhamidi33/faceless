@@ -1,0 +1,12 @@
+{
+    "name": "consistent_comic",
+    "model": "dreamshaper_8.safetensors",
+    "prompt_prefix": "style of dark modern 2d animation, over the garden wall vibes, gravity falls style, hand drawn, clean thick outlines, flat coloring with dramatic rim lighting, moody atmosphere, mystery thriller, expressive characters, high definition cartoon",
+    "negative_prompt": "photorealistic, 3d render, anime, vintage comic halftone, noise, grain, messy, watermark, text, speech bubble, blurry, low resolution",
+    "width": 512,
+    "height": 896,
+    "character_bible": "Consistency Focus: The main character is a young man with messy dark hair, wearing a white t-shirt and blue shorts. He looks worried. He appears in most scenes.",
+    "camera_bible": "cinematic cartoon composition, wide shots for establishing context, close-ups for emotion, eye-level angles, 2d illustrated look",
+    "music_mood": "analog_drone",
+    "caption_style": "typewriter"
+}
