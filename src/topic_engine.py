@@ -82,36 +82,33 @@ class TopicEngine:
         return False
 
     def _generate_batch(self):
-        prompt = (
-            f"Generate 100-150 specific, obscure, and unsettling historical events for the niche '{self.niche}'.\n"
-            "RULES:\n"
-            "- Focus on: Industrial disasters, strange disappearances, survival incidents, uncanny historical facts, all strictly within the '{self.niche}' theme.\n"
-            "- NO: Mainstream myths (Area 51, Bigfoot), pure fantasy, or well-known unresolved mysteries (Zodiac).\n"
-            "- FORMAT: JSON object with a single key 'topics'.\n"
-            "- EXAMPLE: {{\"topics\": ['The Halifax Explosion 1917', 'The Centralia Mine Fire']}}"
-        )
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o",
-                response_format={"type": "json_object"},
-                messages=[
-                    {"role": "system", "content": "You are a historical archivist for a horror documentary channel. JSON only."},
-                    {"role": "user", "content": prompt}
-                ]
+            prompt = (
+                f"Generate 50 specific, true historical events for the niche '{self.niche}'.\n"
+                "CRITICAL RULES FOR 'TRAGIC_HUMAN_IRONY':\n"
+                "1. FOCUS ON THE INDIVIDUAL: Every topic must revolve around a specific person or small crew (e.g., Kevin Carter, The Piper Alpha Shift Manager, The Radium Girls).\n"
+                "2. THE FATAL FLAW: The story must have a 'Twist of Fate'—a small mistake, a moral dilemma, or a cruel irony that led to disaster.\n"
+                "3. NO SUPERNATURAL: Absolutely NO ghosts, cryptids, aliens, or 'unexplained mysteries'. Only hard, brutal reality.\n"
+                "4. FORMAT: JSON object with a single key 'topics'.\n"
+                "5. EXAMPLES OF GOOD TOPICS:\n"
+                "   - 'Hisashi Ouchi: The man kept alive against his will for 83 days.'\n"
+                "   - 'Franz Reichelt: The tailor who jumped off the Eiffel Tower to prove his suit worked.'\n"
+                "   - 'Vasili Arkhipov: The one man who refused to launch a nuke and saved the world.'\n"
+                "   - 'The Byford Dolphin Incident: The most brutal decompression accident in history.'\n"
             )
-            content = response.choices[0].message.content
-            # print(f"[DEBUG] Topic Batch Response: {content[:100]}...") 
-            data = json.loads(content)
-            
-            # Smart extraction
-            if "topics" in data: return data["topics"]
-            if "list" in data: return data["list"]
-            if "events" in data: return data["events"]
-            
-            # Fallback: check values if it's a list
-            if isinstance(data, list): return data
-            
-            return []
-        except Exception as e:
-            print(f"[!] TopicEngine Batch Error: {e}")
-            return []
+            try:
+                response = self.client.chat.completions.create(
+                    model="gpt-4o",
+                    response_format={"type": "json_object"},
+                    messages=[
+                        {"role": "system", "content": "You are a researcher for a 'Dark History' channel. You find ironic, tragic true stories."},
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                content = response.choices[0].message.content
+                data = json.loads(content)
+                
+                if "topics" in data: return data["topics"]
+                return []
+            except Exception as e:
+                print(f"[!] TopicEngine Batch Error: {e}")
+                return []

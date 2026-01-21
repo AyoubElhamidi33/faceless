@@ -1,6 +1,7 @@
 {
     "channel_name": "Comic Documentary Horror",
-    "format_seconds": 70,
+    "niche": "tragic_human_irony",
+    "format_seconds": 60,
     "scene_count": 16,
     "style": "consistent_comic",
     "caption_style": "center_wordbeats",
