@@ -1,13 +1,13 @@
 {
     "name": "consistent_comic",
-    "prompt_prefix": "modern webtoon style, digital comic art, cel shaded, vibrant colors, thick black outlines, clean line art, high saturation, 2d vector art, emotional expression",
-    "negative_prompt": "photorealistic, 3d render, gritty, noir, black and white, sketch, cross-hatching, blurry, messy, grain, noise, greyscale, realistic texture",
-    "character_bible": "Modern digital comic character, expressive anime-influenced face, distinct features",
-    "camera_bible": "dynamic comic book panel composition, dramatic angle, clear focus on subject",
-    "palette_bible": "vibrant and saturated colors, high contrast lighting, bold primary colors",
+    "prompt_prefix": "western graphic novel style, gritty noir illustration, heavy black ink lines, muted desaturated colors, rough texture, realistic facial proportions, serious tone, Frank Miller style, Mike Mignola style, detailed background",
+    "negative_prompt": "anime, manga, studio ghibli, disney, pixar, vibrant colors, soft lighting, glowing, cute, pretty, smooth skin, big eyes, cartoon, whimsical, fantasy, 3d render, plastic, superhero, bright neon",
+    "character_bible": "Design: Weary expression, realistic imperfections, grime, workman clothes, hard shadows on face",
+    "camera_bible": "Composition: Low angle, claustrophobic framing, harsh rim lighting, rule of thirds",
+    "palette_bible": "Colors: Desaturated earth tones, sickly greens, deep blacks, high contrast, almost monochromatic",
     "width": 1080,
     "height": 1920,
-    "steps": 30,
-    "cfg": 7.0,
+    "steps": 35,
+    "cfg": 8.0,
     "sampler": "dpmpp_2m_karras"
 }

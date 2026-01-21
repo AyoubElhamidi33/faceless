@@ -18,7 +18,10 @@ class VisualEngine:
             import clip
             from PIL import Image
             
-            # 3.3 Enforce Model Presence (Hard Lock)
+            # PATCH 6: Real Filesystem Check for CLIP/Model Availability
+            # This prevents the "fake success" where we assume ComfyUI works just because port 8188 is open.
+            
+            # User V3 Spec: Strict Juggernaut Check
             import os
             # Heuristic to find ComfyUI dir
             possible_paths = [
@@ -32,7 +35,7 @@ class VisualEngine:
                      break
             
             if found_dir:
-                required = ["revAnimated_v122EOL.safetensors"]
+                required = ["Juggernaut_XL_v9_RunDiffusionPhoto_v2.safetensors"]
                 for m in required:
                     if not os.path.exists(os.path.join(found_dir, m)):
                         print(f"[AUDIT] ❌ MISSING MODEL: {m}")
@@ -83,7 +86,7 @@ class VisualEngine:
         for s in scenes:
             # SHOWRUNNER UPGRADE: Priority Video Direction
             if isinstance(s, dict) and "visual_prompt" in s:
-                # Use the Director's specific visual prompt
+                # Use the Director's specific visual prompt from the Writer
                 final_prompt = f"{s['visual_prompt']}. STYLE OVERLAY: {prefix}, {pal_bible}, {cam_bible}"
                 prompts.append(final_prompt)
                 continue
