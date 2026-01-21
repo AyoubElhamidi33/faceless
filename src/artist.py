@@ -81,6 +81,13 @@ class VisualEngine:
         
         prompts = []
         for s in scenes:
+            # SHOWRUNNER UPGRADE: Priority Video Direction
+            if isinstance(s, dict) and "visual_prompt" in s:
+                # Use the Director's specific visual prompt
+                final_prompt = f"{s['visual_prompt']}. STYLE OVERLAY: {prefix}, {pal_bible}, {cam_bible}"
+                prompts.append(final_prompt)
+                continue
+                
             scene_desc = ""
             if isinstance(s, dict):
                 # PATCH 5: Rich Prompt Construction
