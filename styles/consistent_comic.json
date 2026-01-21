@@ -1,13 +1,11 @@
 {
-    "name": "consistent_comic",
-    "prompt_prefix": "western graphic novel style, gritty noir illustration, heavy black ink lines, muted desaturated colors, rough texture, realistic facial proportions, serious tone, Frank Miller style, Mike Mignola style",
-    "negative_prompt": "anime, manga, studio ghibli, disney, pixar, vibrant colors, soft lighting, glowing, cute, pretty, smooth skin, big eyes, cartoon, whimsical, fantasy, 3d render, plastic, superhero, bright neon",
-    "character_bible": "Design: Weary expression, realistic imperfections, grime, workman clothes, hard shadows on face",
-    "camera_bible": "Composition: Low angle, claustrophobic framing, harsh rim lighting",
-    "palette_bible": "Colors: Desaturated blues, sickly greens, deep blacks, high contrast, almost monochromatic",
-    "width": 1080,
-    "height": 1920,
-    "steps": 35,
-    "cfg": 8.0,
-    "sampler": "dpmpp_2m_karras"
+    "channel_name": "Comic Documentary",
+    "niche": "industrial_disasters_and_tragic_human_errors",
+    "format_seconds": 60,
+    "scene_count": 16,
+    "style": "consistent_comic",
+    "caption_style": "center_wordbeats",
+    "music_mood": "dark_ambient",
+    "truth_mode": "documentary_recap",
+    "voice_style": "investigation_doc"
 }

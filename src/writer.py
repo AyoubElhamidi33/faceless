@@ -106,26 +106,23 @@ class ScriptGenerator:
              return {"hook_type": "fallback", "hook_text": f"The silence at {topic} was deafening."}
 
     def _generate_story(self, topic: str, hook: str, hook_type: str, style: dict) -> dict:
-        # PROMETHEUS UPDATE: "Structure-Only" Logic (No Examples)
         prompt = (
             f"TOPIC: {topic} | HOOK: {hook}\n"
-            "ROLE: You are an expert Viral Storyteller for a 'Dark History' channel. You do not write fiction; you write brutal, rhythmic facts.\n\n"
-            "THE NARRATIVE BLUEPRINT (Strict Rules):\n"
-            "1. THE HOOK (0:00): Start with 'Did you know...' followed by the tragic irony or specific death count. Stop the scroll instantly.\n"
-            "2. THE ANCHOR (0:05): Ground the viewer. State the YEAR, the LOCATION, and the PROTAGONIST'S FULL NAME. Establish the routine before the disaster.\n"
-            "3. THE PIVOT (0:15): The exact moment safety turns to danger. You MUST start this sentence with 'But' or 'However'. This is the fatal mistake or discovery.\n"
-            "4. THE ESCALATION (0:30): A rapid-fire sequence of physical actions. Use sensory verbs (smelled smoke, heard the snap, felt the heat). Describe the mechanical failure or moral choice in detail.\n"
-            "5. THE IMPACT (0:50): The final toll. State the number of victims, the suicide, or the specific lasting consequence. End on a heavy, resonant note.\n\n"
-            "THE VISUAL BLUEPRINT (Director Mode):\n"
-            "- CHARACTER SHEET: Define the protagonist's look (e.g., 'Robert, 40s, orange jumpsuit, soot-stained face'). Use this EXACT phrase in every scene.\n"
-            "- CINEMATOGRAPHY: Describe the camera angle (Low Angle, Wide Master, Extreme Close-up) and lighting (Red Alarm Light, Cold Blue Moonlight) for every panel.\n"
-            "- TONE: Gritty, Realistic, High Contrast Noir.\n\n"
-            "CONSTRAINTS:\n"
-            "- NO FLUFF: Adjectives must be physical (e.g., 'burning', 'frozen'), not emotional (e.g., 'scary', 'spooky').\n"
-            "- PACING: Sentences must be breathable (under 12 words on average).\n"
-            "- TRUTH: Use real historical names and numbers. No generic 'workers' or 'people'.\n\n"
-            "OUTPUT FORMAT:\n"
-            "Return a JSON object with this schema:\n"
+            "ROLE: You are a Forensic Investigator. You describe FACTS, PHYSICS, and BIOLOGY. You do not describe feelings.\n\n"
+            "STRICT FORMULA (The 'Piper Alpha' Structure):\n"
+            "1. THE HOOK (0:00): 'Did you know [ONE SPECIFIC MISTAKE] caused [SPECIFIC TRAGIC RESULT]?'\n"
+            "2. THE CONTEXT (0:05): 'On [DATE], [NAME] was working at [LOCATION]...' (Establish the physical setting).\n"
+            "3. THE MECHANIC (0:15): 'But [MECHANICAL/BIOLOGICAL FAILURE] occurred.' (e.g., 'The valve leaked,' 'The cell divided,' 'The rope snapped').\n"
+            "4. THE REACTION (0:30): Describe the PHYSICAL consequences. Do not say 'It was scary.' Say 'The heat melted the steel,' 'The radiation destroyed his chromosomes,' 'The water crushed the hull.'\n"
+            "5. THE AFTERMATH (0:50): The body count or the final scientific ruling.\n\n"
+            "VISUAL INSTRUCTIONS:\n"
+            "- Create a 'visual_prompt' for every scene.\n"
+            "- STYLE: 'Photorealistic, Forensic, Gritty, High Contrast'.\n"
+            "- SUBJECT: Focus on the OBJECTS (The Valve, The Radium Paint, The Cave Wall) and the PERSON'S PHYSICAL STATE (Sweating, Bleeding, Dirty). No generic portraits.\n\n"
+            "NEGATIVE CONSTRAINTS:\n"
+            "- NO EMOTIONAL WORDS: Banned: 'scary', 'eerie', 'spooky', 'haunted', 'terrifying'.\n"
+            "- NO SUPERNATURAL: Everything must have a physical cause.\n\n"
+            "OUTPUT JSON:\n"
             "{\n"
             "  \"hook_text\": \"...\",\n"
             "  \"script_text\": \"...\",\n"
@@ -138,7 +135,7 @@ class ScriptGenerator:
             "  ],\n"
             "  \"narrative_pov\": \"Third Person Objective\",\n"
             "  \"fact_confidence\": \"high\",\n"
-            "  \"beat_words\": [\"LIST\", \"OF\", \"ALL\", \"WORDS\", \"IN\", \"SCRIPT\"]\n"
+            "  \"beat_words\": []\n"
             "}"
         )
         
@@ -148,7 +145,7 @@ class ScriptGenerator:
         )
         data = json.loads(response.choices[0].message.content)
         
-        # Auto-Fix Beat Words (System Stability)
+        # Auto-Fix Beat Words
         script_text = data.get("script_text", "")
         beats = data.get("beat_words", [])
         if beats:

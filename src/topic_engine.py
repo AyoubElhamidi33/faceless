@@ -82,33 +82,35 @@ class TopicEngine:
         return False
 
     def _generate_batch(self):
-            prompt = (
-                f"Generate 50 specific, true historical events for the niche '{self.niche}'.\n"
-                "CRITICAL RULES FOR 'TRAGIC_HUMAN_IRONY':\n"
-                "1. FOCUS ON THE INDIVIDUAL: Every topic must revolve around a specific person or small crew (e.g., Kevin Carter, The Piper Alpha Shift Manager, The Radium Girls).\n"
-                "2. THE FATAL FLAW: The story must have a 'Twist of Fate'—a small mistake, a moral dilemma, or a cruel irony that led to disaster.\n"
-                "3. NO SUPERNATURAL: Absolutely NO ghosts, cryptids, aliens, or 'unexplained mysteries'. Only hard, brutal reality.\n"
-                "4. FORMAT: JSON object with a single key 'topics'.\n"
-                "5. EXAMPLES OF GOOD TOPICS:\n"
-                "   - 'Hisashi Ouchi: The man kept alive against his will for 83 days.'\n"
-                "   - 'Franz Reichelt: The tailor who jumped off the Eiffel Tower to prove his suit worked.'\n"
-                "   - 'Vasili Arkhipov: The one man who refused to launch a nuke and saved the world.'\n"
-                "   - 'The Byford Dolphin Incident: The most brutal decompression accident in history.'\n"
+        prompt = (
+            f"Generate 50 specific, TRUE historical events for the niche '{self.niche}'.\n"
+            "CRITICAL TOPIC FILTERS (STRICT):\n"
+            "1. MATERIAL REALITY ONLY: The event must involve physical objects, biology, or machines. (e.g., Radiation, Pressure, Fire, Disease, War, Engineering Failures).\n"
+            "2. BANNED TOPICS: Absolutely NO ghosts, hauntings, cryptids, curses, folklore, urban legends, or 'unexplained disappearances'.\n"
+            "3. THE 'FATAL MISTAKE': Focus on events caused by a specific human error or design flaw (like Piper Alpha or Chernobyl).\n"
+            "4. SPECIFICITY: Do not say 'The 1920s Polio Outbreak'. Say 'The Cutter Incident 1955'.\n"
+            "5. EXAMPLES OF ACCEPTABLE TOPICS:\n"
+            "   - 'The Byford Dolphin Decompression Accident'\n"
+            "   - 'The Radium Girls (Jaw Necrosis)'\n"
+            "   - 'The Station Nightclub Fire (Foam Insulation)'\n"
+            "   - 'Hisashi Ouchi (Radiation Poisoning)'\n"
+            "   - 'The Nutty Putty Cave Incident (John Jones)'\n"
+            "FORMAT: JSON object with a single key 'topics'."
+        )
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-4o",
+                response_format={"type": "json_object"},
+                messages=[
+                    {"role": "system", "content": "You are a researcher for a 'Dark History' channel. You find ironic, tragic true stories."},
+                    {"role": "user", "content": prompt}
+                ]
             )
-            try:
-                response = self.client.chat.completions.create(
-                    model="gpt-4o",
-                    response_format={"type": "json_object"},
-                    messages=[
-                        {"role": "system", "content": "You are a researcher for a 'Dark History' channel. You find ironic, tragic true stories."},
-                        {"role": "user", "content": prompt}
-                    ]
-                )
-                content = response.choices[0].message.content
-                data = json.loads(content)
+            content = response.choices[0].message.content
+            data = json.loads(content)
                 
-                if "topics" in data: return data["topics"]
-                return []
-            except Exception as e:
-                print(f"[!] TopicEngine Batch Error: {e}")
-                return []
+            if "topics" in data: return data["topics"]
+            return []
+        except Exception as e:
+            print(f"[!] TopicEngine Batch Error: {e}")
+            return []

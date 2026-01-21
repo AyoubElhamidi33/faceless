@@ -69,12 +69,15 @@ def build_storyboard(script_json, style_profile):
              state.visible_objects = list(set(state.visible_objects + new_objs)) # Accumulate
 
         # 4. Construct Scene Data (V4 Schema)
+        # ... inside the loop ...
+        
+        # 4. Construct Scene Data (V4 Schema)
         lighting_prompt = EVENT_LIGHTING.get(state.event_type, EVENT_LIGHTING["NORMAL"])
         
         scene_data = {
             "beat_text": beat_text,
             "main_subject": f"{world.main_character}",
-            "action": f"Scene {i+1} action based on: {beat_text[:50]}...", 
+            "action": f"Scene {i+1} action...", 
             "location": state.current_location,
             "time": f"T+{state.current_time_offset}m",
             "atmosphere": state.event_type.capitalize(),
@@ -82,17 +85,20 @@ def build_storyboard(script_json, style_profile):
             "camera": world.camera_base,
             "mood": state.event_type,
             "event_type": state.event_type,
-            "lighting": lighting_prompt, # PATCH 6: Hard Override
+            "lighting": lighting_prompt, 
             "assigned_beats": scene_beats
         }
         
-        # Override with Writer's specifics if they exist (subject, action, camera)
+        # CRITICAL FIX: Pass the Writer's "visual_prompt" through
         if i < len(writer_scenes) and isinstance(writer_scenes[i], dict):
+            # 1. PRESERVE THE DIRECTOR'S VISUALS
+            if "visual_prompt" in writer_scenes[i]:
+                scene_data["visual_prompt"] = writer_scenes[i]["visual_prompt"]
+            
+            # 2. Fallbacks for other fields
             scene_data["main_subject"] = writer_scenes[i].get("main_subject", scene_data["main_subject"])
             scene_data["action"] = writer_scenes[i].get("action", scene_data["action"])
             if writer_scenes[i].get("camera"):
                  scene_data["camera"] = writer_scenes[i].get("camera")
             
         final_scenes.append(scene_data)
-        
-    return final_scenes
