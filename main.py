@@ -134,23 +134,28 @@ def main():
     stats = load_stats()
     print(f"[*] Studio Stats: {stats['jobs_run']} runs, {stats['failures']} failures.")
     print(f"[*] Studio Stats: {stats['jobs_run']} runs, {stats['failures']} failures.")
-    print(f"[*] 🎥 STUDIO GOLDEN RUN MODE: Single Job Execution")
+    print(f"[*] 🎥 STUDIO PRODUCTION MODE: Continuous Execution")
     
-    try:
-        job_id = f"golden_{int(time.time())}"
-        run_job(job_id, topic_engine)
-        
-        stats["jobs_run"] += 1
-        stats["last_run"] = time.time()
-        save_stats(stats)
-        print("✅ GOLDEN RUN SEQUENCE COMPLETE.")
+    while True:
+        try:
+            job_id = f"job_{int(time.time())}_{random.randint(10,99)}"
+            run_job(job_id, topic_engine)
+            
+            stats["jobs_run"] += 1
+            stats["last_run"] = time.time()
+            save_stats(stats)
+            
+            print("[*] Job Complete. Cooling down 10s...")
+            time.sleep(10)
 
-    except Exception as e:
-        print(f"❌ CRITICAL FAILURE: {e}")
-        traceback.print_exc()
-        stats["failures"] += 1
-        save_stats(stats)
-        sys.exit(1)
+        except KeyboardInterrupt:
+            print("\n🛑 STOPPING STUDIO.")
+            break
+        except Exception as e:
+            print(f"🔥 CRITICAL FAILURE: {e}")
+            stats["failures"] += 1
+            save_stats(stats)
+            time.sleep(30)
 
 if __name__ == "__main__":
     main()

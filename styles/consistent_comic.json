@@ -1,13 +1,13 @@
 {
     "name": "consistent_comic",
-    "prompt_prefix": "gritty graphic novel panel, detailed ink illustration, noir atmosphere, high contrast, dramatic shadows, mature artistic style, heavy lines, muted colors",
-    "negative_prompt": "photorealistic, 3d render, anime, vibrant, cartoony, cel shading, blurry, messy lines, extra fingers, deformed, smooth gradient",
-    "character_bible": "Documentary Style, First-person or Witness POV, Realistic proportions, Expressive faces",
-    "camera_bible": "cinematic composition, rule of thirds, dramatic angles, low angle, atmospheric depth",
-    "palette_bible": "muted blues, cold grays, deep blacks, desaturated earth tones, limited palette",
-    "width": 512,
-    "height": 896,
-    "steps": 25,
-    "cfg": 6.5,
-    "sampler": "euler"
+    "prompt_prefix": "modern webtoon style, digital comic art, cel shaded, vibrant colors, thick black outlines, clean line art, high saturation, 2d vector art, emotional expression",
+    "negative_prompt": "photorealistic, 3d render, gritty, noir, black and white, sketch, cross-hatching, blurry, messy, grain, noise, greyscale, realistic texture",
+    "character_bible": "Modern digital comic character, expressive anime-influenced face, distinct features",
+    "camera_bible": "dynamic comic book panel composition, dramatic angle, clear focus on subject",
+    "palette_bible": "vibrant and saturated colors, high contrast lighting, bold primary colors",
+    "width": 1080,
+    "height": 1920,
+    "steps": 30,
+    "cfg": 7.0,
+    "sampler": "dpmpp_2m_karras"
 }

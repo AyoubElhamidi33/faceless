@@ -90,7 +90,7 @@ class ScriptGenerator:
             f"TYPE: {htype}\n"
             "Generate ONE opening sentence (8-14 words).\n"
             "STRICT RULES:\n"
-            "- BANNED PHRASES: 'Did you know', 'Experts found', 'Police recovered', 'Let me tell you', 'Today I'.\n"
+            "- BANNED PHRASES: 'Experts found', 'Police recovered', 'Let me tell you', 'Today I'.\n"
             "- MUST BE ACTION-ORIENTED or IMMEDIATELY UNSETTLING.\n"
             "- START WITH: Time, Location, or the horrifying object directly.\n"
             "- NO fantasy/monsters. No 'ghosts', 'demons', 'curses'. Use 'shadows', 'figures', 'remains'.\n"
@@ -109,61 +109,36 @@ class ScriptGenerator:
         # PATCH 7: Clean Prompt Structure
         prompt = (
             f"TOPIC: {topic} | HOOK: {hook}\n"
-            "STRICT DOCUMENTARY RECAP STRUCTURE:\n"
-            "1. HOOK (Exact match required)\n"
-            "2. YEAR/LOCATION (Time Jump Context)\n"
-            "3. NORMAL SETUP (The calm before)\n"
-            "4. FIRST WARNING (Something is wrong)\n"
-            "5. ESCALATION BEATS (4-8 scenes of worsening dread)\n"
-            "6. OUTCOME (The tragedy/result)\n"
-            "7. EERIE REFLECTION (Unresolved Note)\n\n"
-            "CRITICAL CONTENT LOCKS:\n"
-            "1. POV LOCK: Declare 'narrative_pov'. Include 3 sensory refs (smell/touch/sound), 1 emotional reaction, 1 decision moment.\n"
-            "2. FALSE CALM: You MUST include a 'False Calm' beat (a moment of safety before doom) between escalation steps.\n"
-            "3. SUBTEXT: Include >=1 theme: systemic failure, ignored warning, injustice.\n"
-            "4. SILENCE: Insert [SILENCE:x] marker near peak.\n"
-            "5. REALISM: 3 time anchors (1 exact minute), 1 off-screen threat, 1 false calm, 1 raw ugly sentence.\n"
-            "6. BEAT COUNT: The script MUST be between 130 and 160 words total. 16 Scenes.\n\n"
-            "CONTINUITY LOCKS:\n"
-            "- Track location/time. Only change when script explicitly does.\n"
-            "- Objects persist.\n"
-            "- Atmosphere evolves gradually.\n\n"
+            "STRICT VIRAL COMIC SCRIPT STRUCTURE:\n"
+            "1. HOOK: Must match '{hook}' exactly.\n"
+            "2. THE REVEAL: Immediately explain the subject (Who/What) in 1 sentence.\n"
+            "3. THE CONFLICT: What went wrong? (Action verbs: Exploded, Collapsed, Screamed).\n"
+            "4. THE CLIMAX: The peak moment of horror/tragedy.\n"
+            "5. THE AFTERMATH: The number of victims or the final result.\n"
+            "6. THE TWIST/ENDING: A final unsettling fact.\n\n"
+            "HARMONY RULES (CRITICAL):\n"
+            "- VISUAL SYNC: Every sentence must describe a PHYSICAL ACTION that can be drawn.\n"
+            "- NO ABSTRACT THOUGHTS: Do not write 'He felt sad.' Write 'He fell to his knees.'\n"
+            "- PACING: Sentences must be short (under 12 words) to allow fast cuts.\n"
+            "- TOTAL LENGTH: Exactly 130-150 words.\n"
+            "- PAUSE MARKERS: You MUST insert '[SILENCE:1.0]' after the Hook and before the Climax. This allows the viewer to breathe.\n"
+            "- BANNED: Do not use poetic words like 'mist', 'whispers', 'shadows danced', 'eerie silence'. Be blunt and factual.\n"
+            "- CRITICAL: You MUST include a 'False Calm' structure sequence: Normal -> Warning -> Normal (False Calm) -> Danger.\n\n"
             "SCENE GENERATION (EXACTLY 16 SCENES):\n"
             "- Return 'scenes' as LIST OF OBJECTS with detailed metadata for rendering.\n"
-            "- CRITICAL: You MUST include a 'False Calm' structure in 'event_type' sequence:\n"
-            "   [...NORMAL..., ...WARNING..., ...NORMAL (False Calm)..., ...DANGER/ESCALATION...]\n"
-            "- DO NOT write the full prompt string. Provide component parts.\n"
             "- Keys per scene:\n"
-            "  'beat_text': (The exact sentence from the script that corresponds to this scene)\n"
+            "  'beat_text': (exact sentence)\n"
             "  'main_subject': (visual description)\n"
             "  'action': (what is happening)\n"
             "  'location': (environment)\n"
-            "  'time': (time of day)\n"
-            "  'lighting': (lighting condition)\n"
-            "  'atmosphere': (e.g. foggy, tense)\n"
-            "  'visible_objects': [list of objects]\n"
-            "  'camera': (framing)\n"
-            "  'mood': (emotional tone)\n"
-            "  'event_type': (NORMAL|WARNING|DISCOVERY|ESCALATION|DANGER|OUTCOME|AFTERMATH)\n\n"
-            "RETURN JSON:\n"
-            "{\n"
-            f'  "hook_type": "{hook_type}",\n'
-            f'  "hook_text": "{hook}",\n'
-            '  "script_text": "Full script text here...",\n'
-            '  "character_profile": {"age_range": "30s", "role": "Investigator", "clothing": "Dark coat", "features": "Tired eyes"},\n'
-            '  "narrative_pov": "...",\n'
-            '  "subtext_theme": "...",\n'
-            '  "iconic_scene_index": 5,\n'
-            '  "scenes": [{...}, ...],\n'
-            '  "fact_confidence": "medium",\n'
-            '  "sticky_ending_line": "...",\n'
-            '  "technical_detail": "...",\n'
-            '  "beat_words": ["WORD", "WORD", ...],  # MUST be 80-110 words, ALL CAPS, matching script roughly\n'
-            '  "keywords": ["tag1", ...],\n'
-            '  "escalation_pattern": [0, 1, ...],\n'
-            '  "false_calm_indices": [9],\n'
-            f'  "ending_type": "ambiguous"\n'
-            "}"
+            "  'visible_objects': (list of specific props)\n"
+            "  'event_type': ('NORMAL', 'WARNING', 'DANGER', 'ESCALATION')\n"
+            "  'time': (e.g. T+0)\n"
+            "  'lighting': (e.g. Harsh, Dim)\n"
+            "  'atmosphere': (e.g. Quiet, Chaotic)\n"
+            "  'camera': (e.g. Close up, Wide)\n\n"
+            "Return STRICT JSON: {\"hook_text\": \"{hook}\", \"script_text\": \"...\", \"scenes\": [...], \"narrative_pov\": \"...\", \"character_profile\": \"...\", \"fact_confidence\": \"high\", \"technical_detail\": \"viral comic flow\"}"
+
         )
         response = self.client.chat.completions.create(
             model="gpt-4o", response_format={"type": "json_object"},

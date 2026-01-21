@@ -101,22 +101,16 @@ class VisualEngine:
                 else:
                     vis_obj_str = str(vis_obj)
                 
-                # Construct Rich Prompt
-                scene_desc = (
-                    f"Subject: {main_subj}, {action}. "
-                    f"Location: {loc}. "
-                    f"Time/Light: {time_of_day}, {lighting}. "
-                    f"Atmosphere: {atmos}. "
-                    f"Camera: {cam}. "
-                    f"MUST SHOW: {vis_obj_str}."
-                )
-            else:
-                scene_desc = str(s)
-            
-            # FINAL PROMPT ASSEMBLY
-            # PATCH 10: Scene Description FIRST for better adherence
-            final_prompt = f"{scene_desc}. Style: {bible_block}"
-            prompts.append(final_prompt)
+                # Construct Rich Prompt (Harmony Phase 2)
+                scene_desc = f"{main_subj}, {action}. {loc}"
+                
+                # Assemble Bible Block
+                bible_block = f"{prefix}. {pal_bible}. {cam_bible}. {char_bible}"
+
+                # FINAL PROMPT ASSEMBLY
+                # PATCH: Style First + Explicit Action/Props for visual production harmony
+                final_prompt = f"{bible_block}. SCENE ACTION: {scene_desc}. PROPS: {vis_obj_str}. LIGHTING: {lighting}. ATMOSPHERE: {atmos}"
+                prompts.append(final_prompt)
 
         # 2. EXTRACT EVENT TYPES FOR MODEL ROUTING
         event_types = [s.get("event_type", "NORMAL") if isinstance(s, dict) else "NORMAL" for s in scenes]
@@ -246,20 +240,32 @@ class VisualEngine:
         from .config import IMAGE_BACKEND
         if IMAGE_BACKEND == "comfyui":
             from .local_comfyui import generate_images as run_comfy
-            # We need to rename them after generation because run_comfy uses scene_01...
-            # Generate to a subfolder?
-            # Or just generate and rename.
-            paths = run_comfy(os.path.basename(job_dir) + "_thumb", prompts, style_profile.get("negative_prompt", ""), job_dir, style_profile)
+            # PATCH 11: ISOLATION
+            # Generate to a subfolder to avoid overwriting scene_01.png
+            thumb_dir = os.path.join(job_dir, "thumbs_temp")
+            os.makedirs(thumb_dir, exist_ok=True)
+
+            paths = run_comfy(os.path.basename(job_dir) + "_thumb", prompts, style_profile.get("negative_prompt", ""), thumb_dir, style_profile)
             
             # Key: local_comfyui names them scene_XX. We want thumb_A, thumb_B.
             # Assuming paths[0] is t1, paths[1] is t2.
             final_paths = []
             for i, p in enumerate(paths):
+                # Paths returned are in thumb_dir. Move them to job_dir.
                 if p and os.path.exists(p):
                     new_name = os.path.join(job_dir, f"thumb_{chr(65+i)}.png")
-                    if os.path.exists(new_name): os.remove(new_name)
-                    os.rename(p, new_name)
-                    final_paths.append(new_name)
+                    try:
+                        os.rename(p, new_name)  # Move & Rename
+                        final_paths.append(new_name)
+                    except Exception as e:
+                        print(f"[!] Thumbnail Rename Fail: {e}")
+            
+            # Cleanup temp dir
+            try:
+                os.rmdir(thumb_dir)
+            except:
+                pass # Not crucial
+
             return final_paths
         else:
              # OpenAI Fallback

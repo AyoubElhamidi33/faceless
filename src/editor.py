@@ -71,15 +71,25 @@ class VideoEditor:
         )
 
     def _ken_burns(self, img_path: str, duration: float):
+        # Randomize movement: sometimes zoom IN, sometimes zoom OUT, sometimes PAN
+        direction = random.choice(['in', 'out', 'pan_left', 'pan_right'])
         clip = ImageClip(img_path).set_duration(duration)
-        # Center crop to fill 9:16
-        clip = clip.resize(height=VIDEO_HEIGHT)
-        if clip.w < VIDEO_WIDTH:
-            clip = clip.resize(width=VIDEO_WIDTH)
-        clip = clip.crop(x1=clip.w/2 - VIDEO_WIDTH/2, width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
         
-        # Slow zoom 1.0 -> 1.05
-        return clip.resize(lambda t : 1 + (0.05 * t)).set_position('center')
+        # Resize to cover screen
+        clip = clip.resize(height=VIDEO_HEIGHT * 1.2) # Make it 20% larger than screen to allow movement
+        w, h = clip.size
+        
+        if direction == 'in':
+            # Zoom Center
+            return clip.resize(lambda t: 1 + 0.04 * t).set_position(('center', 'center'))
+        elif direction == 'out':
+            # Zoom Out
+            return clip.resize(lambda t: 1.08 - 0.04 * t).set_position(('center', 'center'))
+        elif direction == 'pan_left':
+            # Pan Right to Left
+            return clip.set_position(lambda t: (int(-50 * t), 'center'))
+        else:
+            return clip.set_position(('center', 'center'))
 
     def _generate_captions(self, audio_path: str, style: dict, script_data: dict, duration: float, audio_metadata: list = None):
         method = style.get("method", "whisper")
