@@ -1,0 +1,10 @@
+{
+    "channel_name": "Comic Documentary Horror",
+    "format_seconds": 70,
+    "scene_count": 16,
+    "style": "consistent_comic",
+    "caption_style": "center_wordbeats",
+    "music_mood": "dark_ambient",
+    "truth_mode": "documentary_recap",
+    "voice_style": "investigation_doc"
+}

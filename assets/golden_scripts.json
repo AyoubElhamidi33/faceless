@@ -1,0 +1,17 @@
+[
+    {
+        "hook_text": "Did you know that in 1952, a London smog was so toxic it reportedly caused people to walk into the river blindly?",
+        "script_text": "Did you know that in 1952, a London smog was so toxic it reportedly caused people to walk into the river blindly? In December 1952, a yellow fog descended on London. At first, residents ignored it. But by noon, reports claimed visibility dropped to zero inside buildings. Then the screaming started. Hospitals were overwhelmed. Undertakers ran out of coffins. Authorities later admitted 4,000 died in days, though modern estimates suggest 12,000. Survivors spoke of a 'presence' in the fog, something that wasn't just smoke. To this day, the true chemical makeup of that death mist remains partially unexplained.",
+        "fact_confidence": "high"
+    },
+    {
+        "hook_text": "Experts found a radio signal from deep space that repeated every 16 days, but then it suddenly stopped.",
+        "script_text": "Experts found a radio signal from deep space that repeated every 16 days, but then it suddenly stopped. In 2020, Canadian astronomers tracked a Fast Radio Burst from 500 million lightyears away. It was clockwork. Every 16.35 days, a burst. Setup complete. Then, silence. Months later, it returned, but wrong. The pattern shifted. Chaos. Some physicists suggest it's a star quake. Others reportedly whisper about artificial origins. The source remains unknown, but it is watching us.",
+        "fact_confidence": "medium"
+    },
+    {
+        "hook_text": "Police recovered a camera in the Amazon that contained photos of a tribe that technically doesn't exist.",
+        "script_text": "Police recovered a camera in the Amazon that contained photos of a tribe that technically doesn't exist. In 2011, illegal loggers vanished near the Peruvian border. Investigators found their camp abandoned. Food still warm. No bodies. Just a camera buried in the mud. Developed photos showed the loggers running from tall, pale figures with no faces. Local legends speak of the 'Pale Watchers'. Authorities sealed the evidence. The loggers were never found.",
+        "fact_confidence": "low"
+    }
+]

@@ -1,0 +1,12 @@
+{
+    "method": "center_wordbeats",
+    "font": "Arial-Bold",
+    "fontsize": 80,
+    "color": "white",
+    "stroke_color": "black",
+    "stroke_width": 4,
+    "position": "center",
+    "uppercase": true,
+    "shadow_offset": 3,
+    "animation": "fade_scale"
+}

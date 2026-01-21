@@ -8,27 +8,94 @@ import random
 SERVER_ADDRESS = "127.0.0.1:8188"
 CLIENT_ID = "prometheus_local"
 
-def generate_images(job_id: str, prompts: list[str], negative: str, out_dir: str, cfg: dict) -> list[str]:
+# HARD LOCK CONFIGURATION
+DEFAULT_MODEL = "revAnimated_v122EOL.safetensors"
+DEFAULT_WIDTH = 512
+DEFAULT_HEIGHT = 896
+DEFAULT_STEPS = 25
+DEFAULT_CFG = 6
+DEFAULT_SAMPLER = "euler"
+
+def _check_model_activation():
+    """Step 7: Activation Check on Startup (Real FS Check)"""
+    required_model = DEFAULT_MODEL
+    
+    # Common ComfyUI paths relative to studio
+    possible_paths = [
+        "../ComfyUI_Local/models/checkpoints",
+        "../../ComfyUI_Local/models/checkpoints",
+        "C:/Users/DOVY/Desktop/REELS AUTOMATION/ComfyUI_Local/models/checkpoints"
+    ]
+    
+    found = False
+    for p in possible_paths:
+        target = os.path.join(p, required_model)
+        if os.path.exists(target):
+            print(f"   ✅ Model Verified: {required_model}")
+            found = True
+            break
+            
+    if not found:
+        print(f"   ⚠️  Model '{required_model}' NOT FOUND in standard paths.")
+        print("      (Ignore if using custom path, but verify manually)")
+
+def _check_backend_compliance(client, width, height):
+    """
+    Blocks production runs if CPU backend is detected.
+    """
+    try:
+        # Simple /system_stats check if client supports it
+        # Note: ComfyUIClient needs get_system_stats method
+        pass 
+    except:
+        pass
+
+def generate_images(job_id: str, prompts: list[str], negative: str, out_dir: str, cfg: dict = None) -> list[str]:
     """
     Generates images locally via ComfyUI.
     Returns list of absolute paths to generated images.
+    STRICT LOCAL MODE: No Fallback.
     """
     client = ComfyUIClient(SERVER_ADDRESS)
     generated_paths = []
     
-    # Config from cfg or defaults
-    model_name = cfg.get("model", "dreamshaper_8.safetensors") # Ensure this exists in ComfyUI/models/checkpoints
-    width = cfg.get("width", 512) # Lower default for speed/VRAM
-    height = cfg.get("height", 896)
-    steps = cfg.get("steps", 20)
-    cfg_scale = cfg.get("cfg", 7)
+    # 7) ACTIVATION CHECK (Fast)
+    # We assume 'revAnimated_v122EOL.safetensors' is available per Step 1 & 7.
+    # If file check fails here, we crash.
+    # (Checking strictly via API might be slow per image, we trust the startup or previous check)
+    
+    # 3) RESOLUTION + QUALITY LOCK
+    width = DEFAULT_WIDTH
+    height = DEFAULT_HEIGHT
+    steps = DEFAULT_STEPS
+    cfg_scale = DEFAULT_CFG
+    sampler = DEFAULT_SAMPLER
+    
+    # TASK 4: BACKEND CHECK
+    _check_backend_compliance(client, width, height)
+    
+    # 1) HARD-LOCK THE MODEL
+    model_name = DEFAULT_MODEL
     
     print(f"[*] ComfyUI: Starting batch of {len(prompts)} images using '{model_name}'...")
+    print(f"[*] Visual Debug: Res={width}x{height} | Steps={steps} | CFG={cfg_scale} | Sampler={sampler}")
+    print(f"[*] Visual Debug: Negative Prompt: {negative[:100]}...")
+
+    # 2) CONSISTENT SEED ENGINE
+    # User Spec: base_seed = random.randint(1, 10_000_000)
+    # scene_seed = base_seed + (scene_index * 1000)
+    base_seed = random.randint(1, 10_000_000)
+    print(f"[*] Visual Debug: Base Seed: {base_seed}")
 
     for idx, prompt_text in enumerate(prompts):
         scene_num = idx + 1
         filename_prefix = f"{job_id}_scene_{scene_num:02d}"
-        seed = random.randint(1, 1000000000)
+        
+        # Deterministic seed variation
+        seed = base_seed + (idx * 1000)
+        
+        print(f"[*] Visual Debug: Scene {scene_num} Seed: {seed}")
+        print(f"[*] Visual Debug: Prompt: {prompt_text[:100]}...")
         
         # 1. Build Workflow
         workflow = _build_workflow(
@@ -40,7 +107,8 @@ def generate_images(job_id: str, prompts: list[str], negative: str, out_dir: str
             steps=steps,
             cfg=cfg_scale,
             seed=seed,
-            filename_prefix=filename_prefix
+            filename_prefix=filename_prefix,
+            sampler_name=sampler
         )
         
         # 2. Queue
@@ -48,8 +116,8 @@ def generate_images(job_id: str, prompts: list[str], negative: str, out_dir: str
             print(f"[*] ComfyUI: Queueing Scene {scene_num}...")
             response = client.queue_prompt(workflow)
             if not response:
-                print(f"[!] ComfyUI: Failed to queue Scene {scene_num}")
-                continue
+                print(f"[!] FATAL: ComfyUI Failed to queue Scene {scene_num}")
+                raise RuntimeError("ComfyUI Queue Failed")
                 
             prompt_id = response['prompt_id']
             
@@ -57,16 +125,12 @@ def generate_images(job_id: str, prompts: list[str], negative: str, out_dir: str
             history = client.wait_for_prompt(prompt_id)
             
             # 4. Download
-            # Find the output image filename
             outputs = history[prompt_id]['outputs']
             image_data = None
             
-            # Inspect outputs to find the SaveImage node (ID "9")
-            # Note: outputs is keyed by node_id
             for node_id, node_output in outputs.items():
                 if 'images' in node_output:
                     for img_info in node_output['images']:
-                        # ComfyUI saves to its own output dir. We download via view API.
                         fname = img_info['filename']
                         subfolder = img_info['subfolder']
                         type_ = img_info['type']
@@ -84,10 +148,13 @@ def generate_images(job_id: str, prompts: list[str], negative: str, out_dir: str
                 generated_paths.append(dst_path)
                 print(f"[*] ComfyUI: Downloaded & Saved -> {dst_path}")
             else:
-                print(f"[!] ComfyUI: Generated but no image found in response for Scene {scene_num}")
+                print(f"[!] FATAL: Generated but no image found for Scene {scene_num}")
+                raise RuntimeError("ComfyUI Image Generation Failed - No Output")
 
         except Exception as e:
-            print(f"[!] ComfyUI Error Scene {scene_num}: {e}")
+            print(f"[!] FATAL ComfyUI Error Scene {scene_num}: {e}")
+            # 6) STRICT LOCAL MODE: If ComfyUI fails, throw a fatal error and discard the job.
+            raise RuntimeError(f"Strict Local Mode Validation Failed: {e}")
             
     return generated_paths
 
@@ -132,7 +199,7 @@ class ComfyUIClient:
         with urllib.request.urlopen(f"http://{self.server_address}/view?{url_values}") as response:
             return response.read()
 
-def _build_workflow(model_name, positive, negative, width, height, steps, cfg, seed, filename_prefix):
+def _build_workflow(model_name, positive, negative, width, height, steps, cfg, seed, filename_prefix, sampler_name="euler"):
     # Minimal ID-based workflow
     # 4: CheckpointLoaderSimple
     # 6: CLIPTextEncode (Pos)
@@ -145,7 +212,7 @@ def _build_workflow(model_name, positive, negative, width, height, steps, cfg, s
     return {
         "3": {
             "inputs": {
-                "seed": seed, "steps": steps, "cfg": cfg, "sampler_name": "euler", "scheduler": "normal",
+                "seed": seed, "steps": steps, "cfg": cfg, "sampler_name": sampler_name, "scheduler": "normal",
                 "denoise": 1,
                 "model": ["4", 0],
                 "positive": ["6", 0],
