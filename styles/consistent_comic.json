@@ -1,10 +1,10 @@
 {
     "name": "consistent_comic",
-    "prompt_prefix": "western graphic novel style, gritty noir illustration, heavy black ink lines, muted desaturated colors, rough texture, realistic facial proportions, serious tone, Frank Miller style, Mike Mignola style, detailed background",
+    "prompt_prefix": "western graphic novel style, gritty noir illustration, heavy black ink lines, muted desaturated colors, rough texture, realistic facial proportions, serious tone, Frank Miller style, Mike Mignola style",
     "negative_prompt": "anime, manga, studio ghibli, disney, pixar, vibrant colors, soft lighting, glowing, cute, pretty, smooth skin, big eyes, cartoon, whimsical, fantasy, 3d render, plastic, superhero, bright neon",
     "character_bible": "Design: Weary expression, realistic imperfections, grime, workman clothes, hard shadows on face",
-    "camera_bible": "Composition: Low angle, claustrophobic framing, harsh rim lighting, rule of thirds",
-    "palette_bible": "Colors: Desaturated earth tones, sickly greens, deep blacks, high contrast, almost monochromatic",
+    "camera_bible": "Composition: Low angle, claustrophobic framing, harsh rim lighting",
+    "palette_bible": "Colors: Desaturated blues, sickly greens, deep blacks, high contrast, almost monochromatic",
     "width": 1080,
     "height": 1920,
     "steps": 35,

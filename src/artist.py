@@ -35,7 +35,7 @@ class VisualEngine:
                      break
             
             if found_dir:
-                required = ["revAnimated_v122EOL.safetensors"]
+                required = ["Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"]
                 for m in required:
                     if not os.path.exists(os.path.join(found_dir, m)):
                         print(f"[AUDIT] ❌ MISSING MODEL: {m}")

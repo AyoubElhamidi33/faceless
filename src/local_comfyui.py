@@ -9,7 +9,7 @@ SERVER_ADDRESS = "127.0.0.1:8188"
 CLIENT_ID = "prometheus_local"
 
 # HARD LOCK CONFIGURATION
-DEFAULT_MODEL = "revAnimated_v122EOL.safetensors"
+DEFAULT_MODEL = "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
 DEFAULT_WIDTH = 512
 DEFAULT_HEIGHT = 896
 DEFAULT_STEPS = 25

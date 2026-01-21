@@ -16,7 +16,7 @@ def check_comfy_ready():
     return False
 
 def check_model_exists():
-    path = "c:/Users/DOVY/Desktop/REELS AUTOMATION/ComfyUI_Local/models/checkpoints/revAnimated_v122EOL.safetensors"
+    path = "c:/Users/DOVY/Desktop/REELS AUTOMATION/ComfyUI_Local/models/checkpoints/Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
     print(f"[*] Checking Model: {os.path.basename(path)}...")
     if os.path.exists(path):
         print("   ✅ Model Found")

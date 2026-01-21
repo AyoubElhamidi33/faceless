@@ -106,47 +106,54 @@ class ScriptGenerator:
              return {"hook_type": "fallback", "hook_text": f"The silence at {topic} was deafening."}
 
     def _generate_story(self, topic: str, hook: str, hook_type: str, style: dict) -> dict:
-        # PATCH 7: Clean Prompt Structure
-        # V3 UPGRADE: "Director Mode" - Enforces Visual Continuity
+        # PROMETHEUS UPDATE: "Structure-Only" Logic (No Examples)
         prompt = (
             f"TOPIC: {topic} | HOOK: {hook}\n"
-            "ROLE: You are the Showrunner for a Viral 'Dark History' Motion Comic. You write the SCRIPT and the VISUAL DIRECTION.\n\n"
-            "STRICT SCRIPT STRUCTURE (The 'Piper Alpha' Formula):\n"
-            "1. 0:00 - THE HOOK: Start with 'Did you know...' followed by the tragic irony or statistic.\n"
-            "2. 0:05 - THE CONTEXT: Name the PERSON, DATE, and LOCATION immediately.\n"
-            "3. 0:15 - THE TWIST ('BUT'): Introduce the fatal error or moral dilemma.\n"
-            "4. 0:30 - THE CATASTROPHE: Punchy action verbs (Exploded, Collapsed, Screamed).\n"
-            "5. 0:50 - THE OUTRO: A haunting final realization.\n\n"
-            "VISUAL DIRECTION RULES (CRITICAL):\n"
-            "- CHARACTER LOCK: Define the protagonist ONCE (e.g. 'James, 40s, weary face, orange jumpsuit, grease stains'). Use this EXACT description for every scene they appear in.\n"
-            "- CAMERA: Use cinematic terms: 'Extreme Close-up', 'Low Angle', 'Over the Shoulder', 'Wide Master Shot'.\n"
-            "- LIGHTING: Specify the mood: 'Harsh red emergency light', 'Cold blue moonlight', 'Pitch black with single spotlight'.\n\n"
-            "SCENE GENERATION (16 SCENES):\n"
-            "- Return 'scenes' as a list. You MUST generate a 'visual_prompt' field for every scene.\n"
-            "- Keys per scene:\n"
-            "  'beat_text': (The script sentence)\n"
-            "  'visual_prompt': (THE IMAGE PROMPT: Start with the Camera/Lighting. Then the Character Definition. Then the Action. e.g. 'Low angle, red alarm light. James, 40s, orange jumpsuit, grease stains, screaming into a radio.')\n"
-            "  'event_type': ('NORMAL', 'WARNING', 'DANGER', 'ESCALATION', 'AFTERMATH')\n\n"
-            "RETURN STRICT JSON: {\"hook_text\": \"...\", \"script_text\": \"...\", \"scenes\": [...], \"narrative_pov\": \"...\", \"fact_confidence\": \"high\", \"beat_words\": [...]}"
+            "ROLE: You are an expert Viral Storyteller for a 'Dark History' channel. You do not write fiction; you write brutal, rhythmic facts.\n\n"
+            "THE NARRATIVE BLUEPRINT (Strict Rules):\n"
+            "1. THE HOOK (0:00): Start with 'Did you know...' followed by the tragic irony or specific death count. Stop the scroll instantly.\n"
+            "2. THE ANCHOR (0:05): Ground the viewer. State the YEAR, the LOCATION, and the PROTAGONIST'S FULL NAME. Establish the routine before the disaster.\n"
+            "3. THE PIVOT (0:15): The exact moment safety turns to danger. You MUST start this sentence with 'But' or 'However'. This is the fatal mistake or discovery.\n"
+            "4. THE ESCALATION (0:30): A rapid-fire sequence of physical actions. Use sensory verbs (smelled smoke, heard the snap, felt the heat). Describe the mechanical failure or moral choice in detail.\n"
+            "5. THE IMPACT (0:50): The final toll. State the number of victims, the suicide, or the specific lasting consequence. End on a heavy, resonant note.\n\n"
+            "THE VISUAL BLUEPRINT (Director Mode):\n"
+            "- CHARACTER SHEET: Define the protagonist's look (e.g., 'Robert, 40s, orange jumpsuit, soot-stained face'). Use this EXACT phrase in every scene.\n"
+            "- CINEMATOGRAPHY: Describe the camera angle (Low Angle, Wide Master, Extreme Close-up) and lighting (Red Alarm Light, Cold Blue Moonlight) for every panel.\n"
+            "- TONE: Gritty, Realistic, High Contrast Noir.\n\n"
+            "CONSTRAINTS:\n"
+            "- NO FLUFF: Adjectives must be physical (e.g., 'burning', 'frozen'), not emotional (e.g., 'scary', 'spooky').\n"
+            "- PACING: Sentences must be breathable (under 12 words on average).\n"
+            "- TRUTH: Use real historical names and numbers. No generic 'workers' or 'people'.\n\n"
+            "OUTPUT FORMAT:\n"
+            "Return a JSON object with this schema:\n"
+            "{\n"
+            "  \"hook_text\": \"...\",\n"
+            "  \"script_text\": \"...\",\n"
+            "  \"scenes\": [\n"
+            "    {\n"
+            "      \"beat_text\": \"...\",\n"
+            "      \"visual_prompt\": \"[CAMERA] [LIGHTING] [CHARACTER] [ACTION]\",\n"
+            "      \"event_type\": \"NORMAL\" | \"WARNING\" | \"DANGER\" | \"ESCALATION\" | \"AFTERMATH\"\n"
+            "    }\n"
+            "  ],\n"
+            "  \"narrative_pov\": \"Third Person Objective\",\n"
+            "  \"fact_confidence\": \"high\",\n"
+            "  \"beat_words\": [\"LIST\", \"OF\", \"ALL\", \"WORDS\", \"IN\", \"SCRIPT\"]\n"
+            "}"
         )
+        
         response = self.client.chat.completions.create(
             model="gpt-4o", response_format={"type": "json_object"},
             messages=[{"role": "system", "content": "Prometheus Documentary Engine. JSON Output."}, {"role": "user", "content": prompt}]
         )
         data = json.loads(response.choices[0].message.content)
         
-        # PATCH 8: Auto-Fix Beat Words to pass Validator
+        # Auto-Fix Beat Words (System Stability)
         script_text = data.get("script_text", "")
         beats = data.get("beat_words", [])
-        
-        # Normalize existing beats
         if beats:
             beats = [str(b).upper().strip(".,!?") for b in beats]
-            
         script_words = [w.strip(".,!?").upper() for w in script_text.split()]
-        
-        # If missing or too short (Validator expects > 60?)
-        # User said "beat_words must be 80-110".
         if len(beats) < len(script_words) * 0.8:
              data["beat_words"] = script_words
         else:
