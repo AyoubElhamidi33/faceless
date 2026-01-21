@@ -125,16 +125,18 @@ class VideoEditor:
                     txt = word.upper() if uppercase else word
                     w_start = start_t + (i * per_word_time)
                     
-                    # Create Clip
-                    txt_clip = TextClip(
+                    # PATCH 12: Use Pillow Renderer
+                    from .text_renderer import create_text_clip
+                    txt_clip = create_text_clip(
                         txt, 
-                        font=font, 
                         fontsize=fontsize, 
+                        font="Arial", # Force Arial for Windows stability
                         color=color, 
                         stroke_color=stroke_color, 
                         stroke_width=stroke_width,
-                        method='caption', size=(VIDEO_WIDTH-100, None)
-                    ).set_position('center').set_start(w_start).set_duration(per_word_time)
+                        size=(VIDEO_WIDTH-100, None),
+                        duration=per_word_time
+                    ).set_position('center').set_start(w_start)
                     
                      # Animation: Pop
                     txt_clip = txt_clip.resize(lambda t: 1 + (0.2 * t))
@@ -163,16 +165,18 @@ class VideoEditor:
                 txt = word.upper() if uppercase else word
                 start_t = i * per_word_time
                 
-                # Base Clip
-                txt_clip = TextClip(
+                # PATCH 12: Use Pillow Renderer (Fallback)
+                from .text_renderer import create_text_clip
+                txt_clip = create_text_clip(
                     txt, 
-                    font=font, 
                     fontsize=fontsize, 
+                    font="Arial", 
                     color=color, 
                     stroke_color=stroke_color, 
                     stroke_width=stroke_width,
-                    method='caption', size=(VIDEO_WIDTH-100, None)
-                ).set_position('center').set_start(start_t).set_duration(per_word_time)
+                    size=(VIDEO_WIDTH-100, None),
+                    duration=per_word_time
+                ).set_position('center').set_start(start_t)
                 
                 # Animation: Fade In + Scale Up (Pop effect)
                 txt_clip = txt_clip.resize(lambda t: 1 + (0.3 * t)) # Zoom in
@@ -194,14 +198,16 @@ class VideoEditor:
             print("[!] Editor: Remote caption backend not implemented. Skipping.")
             return []
 
-        generator = lambda txt: TextClip(
+        # PATCH 12: Use Pillow Renderer (Generator)
+        from .text_renderer import create_text_clip
+        generator = lambda txt: create_text_clip(
             txt, 
-            font=style.get("font", "Arial"), 
+            font="Arial", 
             fontsize=style.get("size", 54), 
             color=style.get("color", "white"),
             stroke_color=style.get("stroke_color", "black"), 
             stroke_width=style.get("stroke", 2),
-            method='caption', size=(VIDEO_WIDTH-100, None)
+            size=(VIDEO_WIDTH-100, None)
         )
         subtitles = SubtitlesClip(srt_path, generator)
         subtitles = subtitles.set_position(('center', 'center'))
