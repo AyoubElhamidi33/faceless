@@ -199,10 +199,17 @@ class ScriptGenerator:
         return json.loads(response.choices[0].message.content)
 
     def _generate_variants(self, script_text: str) -> dict:
+        # BUG FIX: Actually feed the script to the AI
         prompt = (
-            "Generate 2 alternative Hooks for A/B testing this script.\n"
+            f"SCRIPT CONTEXT:\n{script_text[:1000]}\n\n"  # <--- ADDED THIS
+            "TASK: Generate 2 alternative Viral Hooks for this specific script.\n"
+            "STRICT RULES:\n"
+            "1. NO CLICKBAIT: Do not use 'Unlock success' or 'Life hacks'.\n"
+            "2. FORMAT: Must be 'Did you know...' followed by a specific fact from the text above.\n"
+            "3. TONE: Dark, Gritty, Factual.\n"
             "Return JSON: {\"hook_b\": \"...\", \"hook_c\": \"...\"}"
         )
+        
         response = self.client.chat.completions.create(
             model="gpt-4o", response_format={"type": "json_object"},
             messages=[{"role": "user", "content": prompt}]
